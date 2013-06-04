@@ -1,0 +1,6 @@
+.DS_*
+.checkstyle
+.settings
+/bin
+/gen
+lint.xml
