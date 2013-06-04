@@ -30,6 +30,7 @@
         android:background="@color/fog"
         android:hint="@string/status_hint"
         android:inputType="textMultiLine"
+        android:gravity="top|left"
         android:padding="7dp" />
 
     <Button

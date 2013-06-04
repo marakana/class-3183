@@ -1,5 +1,5 @@
 
-package com.cisco.android.helloworld;
+package com.marakana.android.yamba;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,10 +10,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
 import android.app.Activity;
-import android.graphics.Color;
 
 public class StatusActivity extends Activity {
-    private static final String TAG = "HelloWorldActivity";
+    private static final String TAG = "getResources().getColor(R.color.warn_color)";
 
     public static final int MAX_STATUS_LEN = 140;
     public static final int WARN_CHAR_CNT = 10;
@@ -27,7 +26,7 @@ public class StatusActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hello_world);
+        setContentView(R.layout.activity_status);
 
         count = (TextView) findViewById(R.id.status_count);
 
@@ -54,20 +53,20 @@ public class StatusActivity extends Activity {
         String status = statusText.getText().toString();
         if (BuildConfig.DEBUG) { Log.d(TAG, "Submit status: " + status); }
 
-        // emulate a network send.
-        try { Thread.sleep(2 * 60 * 1000); }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        statusText.setText("");
     }
 
 
     void updateCount() {
         int n = MAX_STATUS_LEN - statusText.getText().toString().length();
 
-        int textColor = Color.GREEN;
-        if (ERROR_CHAR_CNT >= n) { textColor = Color.RED; }
-        else if (WARN_CHAR_CNT >= n) { textColor = Color.YELLOW; }
+        int textColor = getResources().getColor(R.color.ok_color);
+        if (ERROR_CHAR_CNT >= n) {
+            textColor = getResources().getColor(R.color.error_color);
+        }
+        else if (WARN_CHAR_CNT >= n) {
+            textColor = getResources().getColor(R.color.warn_color);
+        }
         count.setTextColor(textColor);
         count.setText(String.valueOf(n));
     }

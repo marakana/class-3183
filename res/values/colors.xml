@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="ok_color">#22cc00</color>
+    <color name="warn_color">#ddbb00</color>
+    <color name="error_color">#cc2200</color>
     <color name="seaBlue">#cc4499ff</color>
     <color name="fog">#aacccccc</color>
+
 </resources>
