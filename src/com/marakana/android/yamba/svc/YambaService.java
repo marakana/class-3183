@@ -66,7 +66,7 @@ public class YambaService extends IntentService {
 
         try {
             ((YambaApplication) getApplication())
-                .getClient().updateStatus(status);
+                .getClient().post(status);
         }
         catch (Exception e) { Log.e(TAG, "Post failed!", e); }
     }

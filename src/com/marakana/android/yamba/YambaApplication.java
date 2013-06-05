@@ -15,10 +15,14 @@
 */
 package com.marakana.android.yamba;
 
+import java.util.List;
+
 import android.app.Application;
 import android.util.Log;
 
 import com.marakana.android.yamba.clientlib.YambaClient;
+import com.marakana.android.yamba.clientlib.YambaClient.Status;
+import com.marakana.android.yamba.clientlib.YambaClientException;
 
 
 /**
@@ -28,6 +32,7 @@ import com.marakana.android.yamba.clientlib.YambaClient;
  */
 public class YambaApplication extends Application {
     private static final String TAG = "APP";
+    private static final int MAX_POSTS = 50;
 
     public class SafeYambaClient {
         private final YambaClient yClient;
@@ -36,8 +41,12 @@ public class YambaApplication extends Application {
             yClient = new YambaClient(usr, pwd, url);
         }
 
-        public synchronized void updateStatus(String status) {
-            yClient.updateStatus(status);
+        public synchronized void post(String status) throws YambaClientException {
+            yClient.postStatus(status);
+        }
+
+        public synchronized List<Status> poll() throws YambaClientException {
+            return yClient.getTimeline(MAX_POSTS);
         }
     }
 
