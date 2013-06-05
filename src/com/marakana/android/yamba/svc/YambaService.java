@@ -19,11 +19,8 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.marakana.android.yamba.BuildConfig;
-import com.marakana.android.yamba.R;
-import com.marakana.android.yamba.clientlib.YambaClient;
+import com.marakana.android.yamba.YambaApplication;
 
 
 /**
@@ -32,7 +29,8 @@ import com.marakana.android.yamba.clientlib.YambaClient;
  * @author <a href="mailto:blake.meike@gmail.com">G. Blake Meike</a>
  */
 public class YambaService extends IntentService {
-    private static final String TAG = "YambaService";
+    private static final String TAG = "SVC";
+
     private static final String KEY_STATUS = "YambaService.STATUS";
 
     public static void post(Context ctxt, String status) {
@@ -41,7 +39,16 @@ public class YambaService extends IntentService {
         ctxt.startService(i);
     }
 
-    public YambaService() { super(TAG); }
+    public YambaService() {
+        super(TAG);
+        if (BuildConfig.DEBUG) { Log.d(TAG, "ctor"); }
+    }
+
+    @Override
+    public void onCreate() {
+        if (BuildConfig.DEBUG) { Log.d(TAG, "on create"); }
+        super.onCreate();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -57,17 +64,10 @@ public class YambaService extends IntentService {
     private void doPost(String status) {
         if (BuildConfig.DEBUG) { Log.d(TAG, "Posting: " + status); }
 
-        int msg = R.string.post_failed;
         try {
-            new YambaClient(
-                    "student",
-                    "password",
-                    "http://yamba.marakana.com/api")
-            .updateStatus(status);
-            msg = R.string.post_succeeded;
+            ((YambaApplication) getApplication())
+                .getClient().updateStatus(status);
         }
         catch (Exception e) { Log.e(TAG, "Post failed!", e); }
-
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 }

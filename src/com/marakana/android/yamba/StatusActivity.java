@@ -16,7 +16,7 @@ import android.content.res.Resources;
 import com.marakana.android.yamba.svc.YambaService;
 
 public class StatusActivity extends Activity {
-    private static final String TAG = "getResources().getColor(R.color.warn_color)";
+    private static final String TAG = "STATUS";
 
     public static final int MAX_STATUS_LEN = 140;
     public static final int WARN_CHAR_CNT = 10;

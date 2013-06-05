@@ -7,7 +7,5 @@
     <string name="count">140</string>
     <string name="submit">Submit</string>
     <string name="status_hint">What\'s up? (in 140 characters or less)</string>
-    <string name="post_succeeded">Status posted successfully!</string>
-    <string name="post_failed">Posted failed!</string>
     
 </resources>
