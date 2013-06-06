@@ -23,6 +23,7 @@ import android.util.Log;
 import com.marakana.android.yamba.clientlib.YambaClient;
 import com.marakana.android.yamba.clientlib.YambaClient.Status;
 import com.marakana.android.yamba.clientlib.YambaClientException;
+import com.marakana.android.yamba.svc.YambaService;
 
 
 /**
@@ -57,6 +58,8 @@ public class YambaApplication extends Application {
     public void onCreate() {
         if (BuildConfig.DEBUG) { Log.d(TAG, "Yamba is up!"); }
         super.onCreate();
+
+        YambaService.startPoller(this);
     }
 
     public synchronized SafeYambaClient getClient() {
