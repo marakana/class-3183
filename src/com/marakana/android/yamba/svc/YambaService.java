@@ -15,17 +15,21 @@
  */
 package com.marakana.android.yamba.svc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.util.Log;
 import com.marakana.android.yamba.BuildConfig;
 import com.marakana.android.yamba.YambaApplication;
 import com.marakana.android.yamba.clientlib.YambaClient.Status;
+import com.marakana.android.yamba.data.YambaContract;
 
 
 /**
@@ -46,6 +50,8 @@ public class YambaService extends IntentService {
     private static final long POLL_INTERVAL = 3 * 60 * 1000;
 
     private static final int INTENT_TAG = 19;
+
+    private static final int MSG_POST_COMPLETE = -1;
 
     public static void post(Context ctxt, String status) {
         Intent i = new Intent(ctxt, YambaService.class);
@@ -77,6 +83,7 @@ public class YambaService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    // RUN ON DAEMON THREAD!!!
     @Override
     protected void onHandleIntent(Intent intent) {
         int op = intent.getIntExtra(KEY_OP, 0);
@@ -98,6 +105,7 @@ public class YambaService extends IntentService {
         }
     }
 
+    // RUN ON DAEMON THREAD!!!
     private void doPost(String status) {
         if (BuildConfig.DEBUG) { Log.d(TAG, "Posting: " + status); }
 
@@ -108,6 +116,7 @@ public class YambaService extends IntentService {
         catch (Exception e) { Log.e(TAG, "Post failed!", e); }
     }
 
+    // RUN ON DAEMON THREAD!!!
     private void doPoll() {
         if (BuildConfig.DEBUG) { Log.d(TAG, "Poll"); }
 
@@ -118,6 +127,7 @@ public class YambaService extends IntentService {
         catch (Exception e) { Log.e(TAG, "Poll failed!", e); }
     }
 
+    // RUN ON DAEMON THREAD!!!
     private void doStartPoll() {
         if (BuildConfig.DEBUG) { Log.d(TAG, "Start Polling"); }
 
@@ -136,10 +146,39 @@ public class YambaService extends IntentService {
                         PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
+    // RUN ON DAEMON THREAD!!!
     private void processTimeline(List<Status> timeline) {
+        List<ContentValues> statuses = new ArrayList<ContentValues>();
+        long t = getLastStatusCreatedAt();
         for (Status status: timeline) {
-            Log.d(TAG, "Status " + status.getUser() + "@ " + status.getMessage());
+            long createdAt = status.getCreatedAt().getTime();
+            if (t < createdAt) {
+                ContentValues vals = new ContentValues();
+
+                // Add code to push data here.
+
+                statuses.add(vals);
+            }
         }
+
+        int recs = statuses.size();
+        if (0 < recs) {
+            ContentValues[] data = new ContentValues[recs];
+            getContentResolver().bulkInsert(
+                    YambaContract.Timeline.URI,
+                    statuses.toArray(data));
+        }
+    }
+
+    private long getLastStatusCreatedAt() {
+        Cursor c = getContentResolver().query(
+                YambaContract.Timeline.URI,
+                new String[] { YambaContract.Timeline.Columns.MAX_TIMESTAMP },
+                null,
+                null,
+                null);
+        try { return (c.moveToNext()) ? c.getLong(0) : Long.MIN_VALUE; }
+        finally { c.close(); }
     }
 }
 
