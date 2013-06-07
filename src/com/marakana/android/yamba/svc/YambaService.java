@@ -154,13 +154,13 @@ public class YambaService extends IntentService {
     // RUN ON DAEMON THREAD!!!
     private void processTimeline(List<Status> timeline) {
         List<ContentValues> statuses = new ArrayList<ContentValues>();
-        long t = getLastStatusCreatedAt();
+        long mostRecent = getMostRecentStatusTime();
         for (Status status: timeline) {
             long createdAt = status.getCreatedAt().getTime();
-            if (t < createdAt) {
+            if (mostRecent < createdAt) {
                 ContentValues vals = new ContentValues();
                 vals.put(YambaContract.Timeline.Columns.ID, Long.valueOf(status.getId()));
-                vals.put(YambaContract.Timeline.Columns.TIMESTAMP, Long.valueOf(t));
+                vals.put(YambaContract.Timeline.Columns.TIMESTAMP, Long.valueOf(createdAt));
                 vals.put(YambaContract.Timeline.Columns.USER, status.getUser());
                 vals.put(YambaContract.Timeline.Columns.STATUS, status.getMessage());
                 statuses.add(vals);
@@ -176,7 +176,7 @@ public class YambaService extends IntentService {
         }
     }
 
-    private long getLastStatusCreatedAt() {
+    private long getMostRecentStatusTime() {
         Cursor c = getContentResolver().query(
                 YambaContract.Timeline.URI,
                 new String[] { YambaContract.Timeline.Columns.MAX_TIMESTAMP },
