@@ -51,8 +51,6 @@ public class YambaService extends IntentService {
 
     private static final int INTENT_TAG = 19;
 
-    private static final int MSG_POST_COMPLETE = -1;
-
     public static void post(Context ctxt, String status) {
         Intent i = new Intent(ctxt, YambaService.class);
         i.putExtra(KEY_OP, OP_POST);
@@ -124,7 +122,14 @@ public class YambaService extends IntentService {
             processTimeline(((YambaApplication) getApplication())
                 .getClient().poll());
         }
-        catch (Exception e) { Log.e(TAG, "Poll failed!", e); }
+        catch (Exception e) {
+
+            Log.e(TAG, "Poll failed!", e);
+
+            for (Throwable t = e; t != null; t.getCause()) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // RUN ON DAEMON THREAD!!!
@@ -154,9 +159,10 @@ public class YambaService extends IntentService {
             long createdAt = status.getCreatedAt().getTime();
             if (t < createdAt) {
                 ContentValues vals = new ContentValues();
-
-                // Add code to push data here.
-
+                vals.put(YambaContract.Timeline.Columns.ID, Long.valueOf(status.getId()));
+                vals.put(YambaContract.Timeline.Columns.TIMESTAMP, Long.valueOf(t));
+                vals.put(YambaContract.Timeline.Columns.USER, status.getUser());
+                vals.put(YambaContract.Timeline.Columns.STATUS, status.getMessage());
                 statuses.add(vals);
             }
         }

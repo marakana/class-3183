@@ -29,12 +29,11 @@ public class YambaDBHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "yamba.db";
     private static final int VERSION = 1;
 
-    public static final String TABLE = "timeline";
-    public static final String COL_ID = "id";
-    public static final String COL_CREATED_AT = "created_at";
-    public static final String COL_USER = "user";
-    public static final String COL_STATUS = "status";
-
+    static final String TABLE = "timeline";
+    static final String COL_ID = "id";
+    static final String COL_CREATED_AT = "created_at";
+    static final String COL_USER = "user";
+    static final String COL_STATUS = "status";
 
     public YambaDBHelper(Context ctxt) {
         super(ctxt, DB_NAME, null, VERSION);

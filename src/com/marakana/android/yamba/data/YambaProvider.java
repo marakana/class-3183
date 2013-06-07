@@ -147,14 +147,17 @@ public class YambaProvider extends ContentProvider {
                 throw new UnsupportedOperationException("URI unsupported in bulk insert: " + uri);
         }
 
+
         SQLiteDatabase db = getDb();
         int count = 0;
         try {
             db.beginTransaction();
             for (ContentValues row: vals) {
-
-            // Add code to insert data here.
-
+                row = COL_MAP_TIMELINE.translateCols(row);
+                if (0 <= db.insert(YambaDBHelper.TABLE, null, row))
+                {
+                    count++;
+                }
             }
             db.setTransactionSuccessful();
         }
