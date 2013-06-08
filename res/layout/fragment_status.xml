@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    tools:context=".StatusActivity" >
+
+    <TextView
+        android:id="@+id/status_label"
+        style="@style/yambaBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/title_activity_status" />
+
+    <TextView
+        android:id="@+id/status_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/count"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/status_message"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:background="@color/fog"
+        android:hint="@string/status_hint"
+        android:inputType="textMultiLine"
+        android:gravity="top|left"
+        android:padding="7dp" />
+
+    <Button
+        android:id="@+id/status_submit"
+        style="@style/yambaMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/submit" />
+
+</LinearLayout>

@@ -18,6 +18,9 @@ package com.marakana.android.yamba;
 import java.util.List;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.marakana.android.yamba.clientlib.YambaClient;
@@ -31,7 +34,8 @@ import com.marakana.android.yamba.svc.YambaService;
  * @version $Revision: $
  * @author <a href="mailto:blake.meike@gmail.com">G. Blake Meike</a>
  */
-public class YambaApplication extends Application {
+public class YambaApplication extends Application
+    implements SharedPreferences.OnSharedPreferenceChangeListener  {
     private static final String TAG = "APP";
     private static final int MAX_POSTS = 50;
 
@@ -51,7 +55,9 @@ public class YambaApplication extends Application {
         }
     }
 
-
+    private String keyUser;
+    private String keyPasswd;
+    private String keyEndpoint;
     private SafeYambaClient client;
 
     @Override
@@ -59,16 +65,31 @@ public class YambaApplication extends Application {
         if (BuildConfig.DEBUG) { Log.d(TAG, "Yamba is up!"); }
         super.onCreate();
 
+        // FIX ME!!!
         YambaService.startPoller(this);
+
+        Resources rez = getResources();
+        keyUser = rez.getString(R.string.prefs_key_user);
+        keyPasswd = rez.getString(R.string.prefs_key_pwd);
+        keyEndpoint = rez.getString(R.string.prefs_key_endpoint);
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this);
     }
 
     public synchronized SafeYambaClient getClient() {
         if (null == client) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             client = new SafeYambaClient(
-                "student",
-                "password",
-                "http://yamba.marakana.com/api");
+                    prefs.getString(keyUser, ""),
+                    prefs.getString(keyPasswd, ""),
+                    prefs.getString(keyEndpoint, ""));
         }
         return client;
+    }
+
+    @Override
+    public synchronized void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        client = null;
     }
 }
